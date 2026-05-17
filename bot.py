@@ -1,4 +1,5 @@
 import re
+import asyncio
 import logging
 from telegram import Update
 from telegram.ext import Application, MessageHandler, filters, ContextTypes
@@ -30,6 +31,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     phone = extract_phone(text)
     if not phone:
         return
+        await asyncio.sleep(120)
     try:
         twilio_client.calls.create(
             to=phone,
