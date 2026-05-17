@@ -1,12 +1,12 @@
 import re
 import logging
 from telegram import Update
-from telegram.ext import Application, MessageHandler, filters
+from telegram.ext import Application, MessageHandler, filters, ContextTypes
 from twilio.rest import Client
 
-TELEGRAM_BOT_TOKEN = "ВСТАВЬ_ТОКЕН_БОТА"
-TWILIO_ACCOUNT_SID = "ВСТАВЬ_ACCOUNT_SID"
-TWILIO_AUTH_TOKEN = "ВСТАВЬ_AUTH_TOKEN"
+TELEGRAM_BOT_TOKEN = "8900911631:AAEQy1sEyLTrMW8g27tIit3-SW2-_ANkLbg"
+TWILIO_ACCOUNT_SID = "AC93fa6ab5de0da1e3dd0de4714b6105cc"
+TWILIO_AUTH_TOKEN = "8beb0feca4d769689e03ecee7565cd13"
 TWILIO_FROM_NUMBER = "+19165716526"
 NEXFIELD_NUMBER = "+19165071904"
 
@@ -25,7 +25,7 @@ def extract_phone(text):
                 return f"+{digits}"
     return None
 
-def handle_message(update, context):
+async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
     phone = extract_phone(text)
     if not phone:
@@ -36,15 +36,10 @@ def handle_message(update, context):
             from_=TWILIO_FROM_NUMBER,
             twiml=f"<Response><Say>Please hold.</Say><Dial>{NEXFIELD_NUMBER}</Dial></Response>"
         )
-        update.message.reply_text(f"Calling {phone}")
+        await update.message.reply_text(f"Calling {phone}")
     except Exception as e:
-        update.message.reply_text(f"Error: {e}")
+        await update.message.reply_text(f"Error: {e}")
 
-def main():
-    updater = Updater(TELEGRAM_BOT_TOKEN)
-    updater.dispatcher.add_handler(MessageHandler(Filters.text, handle_message))
-    updater.start_polling()
-    updater.idle()
-
-if __name__ == "__main__":
-    main()
+app = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
+app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+app.run_polling()
