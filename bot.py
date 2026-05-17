@@ -1,7 +1,7 @@
 import re
 import logging
 from telegram import Update
-from telegram.ext import Application, MessageHandler, Filters
+from telegram.ext import Application, MessageHandler, filters
 from twilio.rest import Client
 
 TELEGRAM_BOT_TOKEN = "ВСТАВЬ_ТОКЕН_БОТА"
