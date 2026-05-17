@@ -29,20 +29,23 @@ def extract_phone(text):
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
     phone = extract_phone(text)
+
     if not phone:
         return
-        
-await asyncio.sleep(120)
+
+    await asyncio.sleep(120)
+
     try:
         twilio_client.calls.create(
             to=phone,
             from_=TWILIO_FROM_NUMBER,
             twiml=f"<Response><Say>Please hold.</Say><Dial>{NEXFIELD_NUMBER}</Dial></Response>"
         )
+
         await update.message.reply_text(f"Calling {phone}")
+
     except Exception as e:
         await update.message.reply_text(f"Error: {e}")
-
 app = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 app.run_polling()
